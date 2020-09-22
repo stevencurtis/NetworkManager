@@ -27,6 +27,13 @@ public class NetworkManager<T: URLSessionProtocol> {
         self.session = session
     }
     
+    var task: T.dataTaskProtocolType?
+
+    
+    public func cancel() {
+        task?.cancel()
+    }
+    
     public func fetch(url: URL, method: HTTPMethod, headers: [String : String] = [:], token: String? = nil, data: [String: Any]? = nil, completionBlock: @escaping (Result<Data, Error>) -> Void) {
         // make network request
         if method == .get {
@@ -56,7 +63,7 @@ public class NetworkManager<T: URLSessionProtocol> {
             request.httpBody = serializedData
         }
         
-        let task = session.dataTask(with: request) { data, response, error in
+        task = session.dataTask(with: request) { data, response, error in
             guard error == nil else {
                 completionBlock(.failure(error!))
                 return
@@ -75,9 +82,8 @@ public class NetworkManager<T: URLSessionProtocol> {
             // if passed guard
             if let data = data {
                 completionBlock(.success(data))
-                
             }
         }
-        task.resume()
+        task?.resume()
     }
 }
