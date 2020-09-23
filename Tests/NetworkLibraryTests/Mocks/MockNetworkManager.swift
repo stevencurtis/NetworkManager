@@ -2,20 +2,22 @@
 
 
 import Foundation
+@testable import NetworkLibrary
+
 
 // the MockHTTPManager does not use the session within the response
-class MockNetworkManager <T: URLSessionProtocol>: NetworkManagerProtocol {
-    func cancel() { }
+public class MockNetworkManager <T: URLSessionProtocol>: NetworkManagerProtocol {
+    public func cancel() { }
     
     var outputData = "".data(using: .utf8)
     var willSucceed = true
-    let session: T
+    public let session: T
 
     required init(session: T) {
       self.session = session
     }
     
-    func fetch(url: URL, method: HTTPMethod, headers: [String : String], token: String?, data: [String : Any]?, completionBlock: @escaping (Result<Data, Error>) -> Void) {
+    public func fetch(url: URL, method: HTTPMethod, headers: [String : String], token: String?, data: [String : Any]?, completionBlock: @escaping (Result<Data, Error>) -> Void) {
         if let dta = outputData {
             if willSucceed {
                 completionBlock(.success(dta))
