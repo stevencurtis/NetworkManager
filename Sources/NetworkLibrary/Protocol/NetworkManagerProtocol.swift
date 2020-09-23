@@ -10,7 +10,7 @@ public protocol NetworkManagerProtocol {
 }
 
 public extension NetworkManagerProtocol {
-    func fetch(url: URL, method: HTTPMethod, headers: [String : String] = [:], token: String?, data: [String: Any]?, completionBlock: @escaping (Result<Data, Error>) -> Void) {
+    func fetch(url: URL, method: HTTPMethod, headers: [String : String] = [:], token: String? = nil, data: [String: Any]? = nil, completionBlock: @escaping (Result<Data, Error>) -> Void) {
         fetch(url: url, method: method, headers: headers, token: token, data: data, completionBlock: completionBlock)
     }
 }
