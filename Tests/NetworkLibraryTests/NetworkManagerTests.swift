@@ -243,6 +243,7 @@ class NetworkManagerTests: XCTestCase {
         networkManager = NetworkManager(session: urlSession!)
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
+                
         networkManager?.fetch(url: url, method: .delete, headers: [:], token: nil, data: nil, completionBlock: { result in
             switch result {
             case .success:
