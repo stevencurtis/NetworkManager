@@ -18,7 +18,7 @@ public class AnyNetworkManager<U: URLSessionProtocol>: NetworkManagerProtocol {
         cancelClosure = manager.cancel()
     }
     
-    convenience init() {
+    public convenience init() {
         let manager = NetworkManager<URLSession>(session: URLSession.shared)
         self.init(manager: manager)
     }
