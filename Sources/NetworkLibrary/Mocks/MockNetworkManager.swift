@@ -12,7 +12,7 @@ public class MockNetworkManager <T: URLSessionProtocol>: NetworkManagerProtocol 
     var willSucceed = true
     public let session: T
 
-    required init(session: T) {
+    public required init(session: T) {
       self.session = session
     }
     
