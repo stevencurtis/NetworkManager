@@ -8,8 +8,9 @@ import Foundation
 public class MockNetworkManager <T: URLSessionProtocol>: NetworkManagerProtocol {
     public func cancel() { }
     
-    var outputData = "".data(using: .utf8)
-    var willSucceed = true
+    public var outputData = "".data(using: .utf8)
+    public var willSucceed = true
+    public var didFetch = false
     public let session: T
 
     public required init(session: T) {
@@ -17,6 +18,7 @@ public class MockNetworkManager <T: URLSessionProtocol>: NetworkManagerProtocol 
     }
     
     public func fetch(url: URL, method: HTTPMethod, headers: [String : String], token: String?, data: [String : Any]?, completionBlock: @escaping (Result<Data, Error>) -> Void) {
+        didFetch = true
         if let dta = outputData {
             if willSucceed {
                 completionBlock(.success(dta))
