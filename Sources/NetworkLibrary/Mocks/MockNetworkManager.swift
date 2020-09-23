@@ -2,13 +2,12 @@
 
 
 import Foundation
-@testable import NetworkLibrary
 
 // the MockHTTPManager does not use the session within the response
 class MockNetworkManager <T: URLSessionProtocol>: NetworkManagerProtocol {
     func cancel() { }
     
-    var outputData = emptyString.data(using: .utf8)
+    var outputData = "".data(using: .utf8)
     var willSucceed = true
     let session: T
 
