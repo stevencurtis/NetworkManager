@@ -258,4 +258,22 @@ class AnyNetworkManagerTests: XCTestCase {
         wait(for: [expectation], timeout: 3.0)
     }
     
+    
+    func testAnyNetworkConv() {
+        var networkManager: AnyNetworkManager<URLSession>?
+        networkManager = AnyNetworkManager()
+        let expectation = XCTestExpectation(description: #function)
+        let url = URL(fileURLWithPath: "http://www.google.com")
+        networkManager?.fetch(url: url, method: .delete, headers: [:], token: nil, data: nil, completionBlock: { result in
+            switch result {
+            case .success:
+                XCTFail()
+            case .failure(let error):
+                XCTAssertNotNil(error)
+                expectation.fulfill()
+            }
+        })
+        wait(for: [expectation], timeout: 3.0)
+    }
+    
 }

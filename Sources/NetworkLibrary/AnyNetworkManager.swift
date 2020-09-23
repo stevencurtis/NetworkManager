@@ -17,6 +17,11 @@ public class AnyNetworkManager<U: URLSessionProtocol>: NetworkManagerProtocol {
         session = manager.session as! U
         cancelClosure = manager.cancel()
     }
+    
+    convenience init() {
+        let manager = NetworkManager<URLSession>(session: URLSession.shared)
+        self.init(manager: manager)
+    }
         
     public func fetch(url: URL, method: HTTPMethod, headers: [String : String] = [:], token: String? = nil, data: [String: Any]? = nil, completionBlock: @escaping (Result<Data, Error>) -> Void) {
         fetchClosure(url, method, headers, token, data, completionBlock)
