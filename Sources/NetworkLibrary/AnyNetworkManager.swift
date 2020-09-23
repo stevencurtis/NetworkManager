@@ -11,7 +11,6 @@ public class AnyNetworkManager<U: URLSessionProtocol>: NetworkManagerProtocol {
         cancelClosure
     }
     
-    
     public init<T: NetworkManagerProtocol>(manager: T) {
         fetchClosure = manager.fetch
         session = manager.session as! U

@@ -30,6 +30,10 @@ public class NetworkManager<T: URLSessionProtocol> {
     var task: T.dataTaskProtocolType?
 
     
+    public convenience init() {
+        self.init(session: URLSession.shared as! T)
+    }
+    
     public func cancel() {
         task?.cancel()
     }
