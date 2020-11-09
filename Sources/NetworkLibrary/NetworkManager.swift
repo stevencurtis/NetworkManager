@@ -12,13 +12,80 @@ public enum NetworkError: Error, Equatable {
     case accessForbidden
 }
 
-public enum HTTPMethod: String {
-    case get = "GET"
-    case post = "POST"
-    case put = "PUT"
-    case delete = "DELETE"
-    case patch = "PATCH"
+public enum HTTPMethod {
+    case get(headers: [String : String] = [:], token: String? = nil)
+    case post(headers: [String : String] = [:], token: String? = nil, body: [String: Any])
+    case put(headers: [String : String] = [:], token: String? = nil)
+    case delete(headers: [String : String] = [:], token: String? = nil)
+    case patch(headers: [String : String] = [:], token: String? = nil)
 }
+
+extension HTTPMethod: CustomStringConvertible {
+    
+    func getHeaders() -> [String: String]? {
+        switch self {
+        case .get(headers: let headers, _):
+            return headers
+        case .post(headers: let headers, _, body: _):
+            return headers
+        case .put(headers: let headers, _):
+            return headers
+        case .delete(headers: let headers, _):
+            return headers
+        case .patch(headers: let headers, _):
+            return headers
+        }
+    }
+    
+    func getToken() -> String? {
+        switch self {
+        case .get(_, token: let token):
+            return token
+        case .post(_, token: let token, body: _):
+            return token
+        case .put(_, token: let token):
+            return token
+        case .delete(_, token: let token):
+            return token
+        case .patch(_, token: let token):
+            return token
+        }
+    }
+    
+    func getData() -> [String: Any]? {
+        switch self {
+        case .get:
+            return nil
+        case .post( _, _, body: let body):
+            return body
+        case .put:
+            return nil
+        case .delete:
+            return nil
+        case .patch:
+            return nil
+        }
+    }
+    
+    public var method: String {
+        return self.description
+    }
+    public var description: String {
+        switch self {
+            case .get:
+                return "GET"
+            case .post:
+                return "POST"
+            case .put:
+                return "PUT"
+            case .delete:
+                return "DELETE"
+            case .patch:
+                return "PATCH"
+        }
+    }
+}
+
 
 public class NetworkManager<T: URLSessionProtocol> {
     public let session: T
@@ -38,33 +105,20 @@ public class NetworkManager<T: URLSessionProtocol> {
         task?.cancel()
     }
     
-    public func fetch(url: URL, method: HTTPMethod, headers: [String : String] = [:], token: String? = nil, data: [String: Any]? = nil, completionBlock: @escaping (Result<Data, Error>) -> Void) {
-        // make network request
-        if method == .get {
-            guard data == nil else {
-                completionBlock(.failure(NetworkError.bodyInGet))
-                return
-            }
-        }
+    public func fetch(url: URL, method: HTTPMethod, completionBlock: @escaping (Result<Data, Error>) -> Void) {
         
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 30.0)
-        request.httpMethod = method.rawValue
-        request.allHTTPHeaderFields = headers
+        request.httpMethod = method.method
+        request.allHTTPHeaderFields = method.getHeaders()
         
-        if let bearerToken = token {
+        if let bearerToken = method.getToken() {
             request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
         }
-        
-        if let data = data {
-            var serializedData: Data?
-            
-            do {
-                serializedData = try JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
-            } catch {
-                completionBlock(.failure( ErrorModel(errorDescription: "Could not serialize data") ))
-            }
-            
-            request.httpBody = serializedData
+
+        if let data = method.getData() {
+            let stringParams = data.paramsString()
+            let bodyData = stringParams.data(using: String.Encoding.utf8, allowLossyConversion: false)
+            request.httpBody = bodyData
         }
         
         task = session.dataTask(with: request) { data, response, error in

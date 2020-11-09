@@ -22,7 +22,7 @@ class NetworkManagerTests: XCTestCase {
         networkManager = NetworkManager(session: urlSession!)
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .get, headers: [:], token: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .get(), completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -44,7 +44,7 @@ class NetworkManagerTests: XCTestCase {
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
-        networkManager?.fetch(url: url, method: .get, headers: [:], token: nil, data: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .get(), completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -66,7 +66,7 @@ class NetworkManagerTests: XCTestCase {
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
-        networkManager?.fetch(url: url, method: .patch, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .patch(), completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -88,7 +88,7 @@ class NetworkManagerTests: XCTestCase {
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
-        networkManager?.fetch(url: url, method: .put, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .put(), completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -110,7 +110,7 @@ class NetworkManagerTests: XCTestCase {
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
-        networkManager?.fetch(url: url, method: .delete, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .delete(), completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -131,7 +131,7 @@ class NetworkManagerTests: XCTestCase {
         networkManager = NetworkManager(session: urlSession!)
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .get, headers: [:], token: nil, completionBlock: {result in
+        networkManager?.fetch(url: url, method: .get(), completionBlock: {result in
             XCTAssertNotNil(result)
             switch result {
             case .success:
@@ -151,7 +151,7 @@ class NetworkManagerTests: XCTestCase {
         networkManager = NetworkManager(session: urlSession!)
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .patch, headers: [:], token: nil, completionBlock: {result in
+        networkManager?.fetch(url: url, method: .patch(), completionBlock: {result in
             XCTAssertNotNil(result)
             switch result {
             case .success:
@@ -171,7 +171,7 @@ class NetworkManagerTests: XCTestCase {
         networkManager = NetworkManager(session: urlSession!)
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .put, headers: [:], token: nil, completionBlock: {result in
+        networkManager?.fetch(url: url, method: .put(), completionBlock: {result in
             XCTAssertNotNil(result)
             switch result {
             case .success:
@@ -191,7 +191,7 @@ class NetworkManagerTests: XCTestCase {
         networkManager = NetworkManager(session: urlSession!)
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .delete, completionBlock: {result in
+        networkManager?.fetch(url: url, method: .delete(), completionBlock: {result in
             XCTAssertNotNil(result)
             switch result {
             case .success:
@@ -209,7 +209,7 @@ class NetworkManagerTests: XCTestCase {
         networkManager = NetworkManager(session: urlSession!)
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .get, headers: [:], token: nil, data: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .get(), completionBlock: { result in
             switch result {
             case .success:
                 XCTFail()
@@ -226,7 +226,7 @@ class NetworkManagerTests: XCTestCase {
         networkManager = NetworkManager(session: urlSession!)
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .put, headers: [:], token: nil, data: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .put(), completionBlock: { result in
             switch result {
             case .success:
                 XCTFail()
@@ -244,7 +244,7 @@ class NetworkManagerTests: XCTestCase {
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
                 
-        networkManager?.fetch(url: url, method: .delete, headers: [:], token: nil, data: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .delete(), completionBlock: { result in
             switch result {
             case .success:
                 XCTFail()

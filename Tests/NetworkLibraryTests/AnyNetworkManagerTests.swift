@@ -24,7 +24,7 @@ class AnyNetworkManagerTests: XCTestCase {
         networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .get, headers: [:], token: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .get(), headers: [:], token: nil, completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -36,7 +36,50 @@ class AnyNetworkManagerTests: XCTestCase {
             }
         })
         waitForExpectations(timeout: 3.0)
+    }
+    
+    func testPostMethodNoBody() {
+        urlSession = MockURLSession()
+        let data = Data("TEsts12".utf8)
+        urlSession?.data = data
         
+        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        let expect = expectation(description: #function)
+        let url = URL(fileURLWithPath: "http://www.google.com")
+        networkManager?.fetch(url: url, method: .post(body: [:]), headers: [:], token: nil, completionBlock: { result in
+            XCTAssertNotNil(result)
+            switch result {
+            case .success(let data):
+                let decodedString = String(decoding: data, as: UTF8.self)
+                XCTAssertEqual(decodedString, "TEsts12")
+                expect.fulfill()
+            case .failure:
+                XCTFail()
+            }
+        })
+        waitForExpectations(timeout: 3.0)
+    }
+    
+    func testPostMethodBody() {
+        urlSession = MockURLSession()
+        let data = Data("TEsts12".utf8)
+        urlSession?.data = data
+        
+        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        let expect = expectation(description: #function)
+        let url = URL(fileURLWithPath: "http://www.google.com")
+        networkManager?.fetch(url: url, method: .post(body: ["email": "eve.holt@reqres.in", "password": "cityslicka"]), headers: [:], token: nil, completionBlock: { result in
+            XCTAssertNotNil(result)
+            switch result {
+            case .success(let data):
+                let decodedString = String(decoding: data, as: UTF8.self)
+                XCTAssertEqual(decodedString, "TEsts12")
+                expect.fulfill()
+            case .failure:
+                XCTFail()
+            }
+        })
+        waitForExpectations(timeout: 3.0)
     }
     
     func testSuccessfulGetURLResponse() {
@@ -47,7 +90,7 @@ class AnyNetworkManagerTests: XCTestCase {
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
-        networkManager?.fetch(url: url, method: .get, headers: [:], token: nil, data: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .get(), headers: [:], token: nil, completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -69,7 +112,7 @@ class AnyNetworkManagerTests: XCTestCase {
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
-        networkManager?.fetch(url: url, method: .patch, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .patch(), completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -91,7 +134,7 @@ class AnyNetworkManagerTests: XCTestCase {
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
-        networkManager?.fetch(url: url, method: .put, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .put(), completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -113,7 +156,7 @@ class AnyNetworkManagerTests: XCTestCase {
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
-        networkManager?.fetch(url: url, method: .delete, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .delete(), completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -134,7 +177,7 @@ class AnyNetworkManagerTests: XCTestCase {
         networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .get, headers: [:], token: nil, completionBlock: {result in
+        networkManager?.fetch(url: url, method: .get(), headers: [:], token: nil, completionBlock: {result in
             XCTAssertNotNil(result)
             switch result {
             case .success:
@@ -154,7 +197,7 @@ class AnyNetworkManagerTests: XCTestCase {
         networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .patch, headers: [:], token: nil, completionBlock: {result in
+        networkManager?.fetch(url: url, method: .patch(), headers: [:], token: nil, completionBlock: {result in
             XCTAssertNotNil(result)
             switch result {
             case .success:
@@ -174,7 +217,7 @@ class AnyNetworkManagerTests: XCTestCase {
         networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .put, headers: [:], token: nil, completionBlock: {result in
+        networkManager?.fetch(url: url, method: .put(), headers: [:], token: nil, completionBlock: {result in
             XCTAssertNotNil(result)
             switch result {
             case .success:
@@ -194,7 +237,7 @@ class AnyNetworkManagerTests: XCTestCase {
         networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .delete, completionBlock: {result in
+        networkManager?.fetch(url: url, method: .delete(), completionBlock: {result in
             XCTAssertNotNil(result)
             switch result {
             case .success:
@@ -212,7 +255,7 @@ class AnyNetworkManagerTests: XCTestCase {
         networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .get, headers: [:], token: nil, data: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .get(), headers: [:], token: nil, completionBlock: { result in
             switch result {
             case .success:
                 XCTFail()
@@ -229,7 +272,7 @@ class AnyNetworkManagerTests: XCTestCase {
         networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .put, headers: [:], token: nil, data: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .put(), headers: [:], token: nil, completionBlock: { result in
             switch result {
             case .success:
                 XCTFail()
@@ -246,7 +289,7 @@ class AnyNetworkManagerTests: XCTestCase {
         networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .delete, headers: [:], token: nil, data: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .delete(), headers: [:], token: nil, completionBlock: { result in
             switch result {
             case .success:
                 XCTFail()
@@ -264,7 +307,7 @@ class AnyNetworkManagerTests: XCTestCase {
         networkManager = AnyNetworkManager()
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .delete, headers: [:], token: nil, data: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .delete(), headers: [:], token: nil, completionBlock: { result in
             switch result {
             case .success:
                 XCTFail()
