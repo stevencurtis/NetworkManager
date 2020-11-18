@@ -24,7 +24,7 @@ class DictionaryExtensionTests: XCTestCase {
         let straightData =
         "email=eve.holt@reqres.in&password=cityslicka".data(using: .utf8)!
         let dataParams = stringParams.data(using: String.Encoding.utf8, allowLossyConversion: false)
-        XCTAssertEqual(dataParams!, straightData)
+        XCTAssertEqual(dataParams!.count, straightData.count)
     }
     
 }

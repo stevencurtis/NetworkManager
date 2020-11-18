@@ -17,7 +17,7 @@ public class MockNetworkManager <T: URLSessionProtocol>: NetworkManagerProtocol 
       self.session = session
     }
     
-    public func fetch(url: URL, method: HTTPMethod, headers: [String : String], token: String?, data: [String : Any]?, completionBlock: @escaping (Result<Data, Error>) -> Void) {
+    public func fetch(url: URL, method: HTTPMethod, completionBlock: @escaping (Result<Data, Error>) -> Void) {
         didFetch = true
         if let dta = outputData {
             if willSucceed {
@@ -27,5 +27,6 @@ public class MockNetworkManager <T: URLSessionProtocol>: NetworkManagerProtocol 
             }
         }
     }
+
 }
 
