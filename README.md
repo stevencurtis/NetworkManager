@@ -2,20 +2,40 @@
 
 A simple tested network library.
 
-## Supports 
+## Installation
+This library supports Swift Package Manager ([installation guide](https://stevenpcurtis.medium.com/use-swift-package-manager-to-add-dependencies-b605f91a4990b605f91a4990?sk=adfd10c7d96557b37ba6ea0443145eb4)).
+
+## Functionality
 - Get
+- Post
 - Patch
 - Put
- - Delete
+- Delete
 
-To use the network manager you must `import NetworkLibrary`.
+To use the network manager you must `import NetworkLibrary` at the top of the relevant class.
 
 This provides an `AnyNetworkManager` that can be stored in a property
 
-`private var networkManager: AnyNetworkManager<URLSession>?`
+```swift
+private var anyNetworkManager: AnyNetworkManager<URLSession>`
+```
 
-which can then be called with something like the following
+which may be passed through an initializer
 
 ```swift
-self.networkManager?.get(url: , method: ,completionBlock: )
+init<T: NetworkManagerProtocol>(networkManager: T) {
+    self.anyNetworkManager = AnyNetworkManager(manager: networkManager)
+}
 ```
+
+The network manager can then be called with something like the following (if you have previously declared some body data and a URL)
+
+```swift
+anyNetworkManager.fetch(url: url, method: .post(body: data), completionBlock: {[weak self] res in
+    // process Result<Data, Error> type
+}
+)
+```
+
+## Guide
+[There is an accompanying guide on Medium](https://stevenpcurtis.medium.com/write-a-network-layer-in-swift-388fbb5d9497)
