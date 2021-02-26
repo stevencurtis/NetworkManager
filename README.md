@@ -37,5 +37,7 @@ anyNetworkManager.fetch(url: url, method: .post(body: data), completionBlock: {[
 )
 ```
 
+The network manager itself can be instantiated by using NetworkManager itself with something like: `NetworkManager(session: URLSession.shared)` 
+
 ## Guide
 [There is an accompanying guide on Medium](https://stevenpcurtis.medium.com/write-a-network-layer-in-swift-388fbb5d9497)
