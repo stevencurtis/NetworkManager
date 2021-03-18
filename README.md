@@ -37,7 +37,25 @@ anyNetworkManager.fetch(url: url, method: .post(body: data), completionBlock: {[
 )
 ```
 
-The network manager itself can be instantiated by using NetworkManager itself with something like: `NetworkManager(session: URLSession.shared)` 
+The network manager itself can be instantiated by using NetworkManager itself with something like: `NetworkManager(session: URLSession.shared)`.
+
+Even better we can use mutliple initializers to instantiate `AnyNetworkManager<URLSession>?`. This can be implemented with a class like the following:
+
+```swift
+final class ApiService {
+    private var anyNetworkManager: AnyNetworkManager<URLSession>?
+
+    init() {
+        self.anyNetworkManager = AnyNetworkManager()
+    }
+
+    init<T: NetworkManagerProtocol>(
+        networkManager: T
+    ) {
+        self.anyNetworkManager = AnyNetworkManager(manager: networkManager)
+    }
+}
+```
 
 ## Guide
 [There is an accompanying guide on Medium](https://stevenpcurtis.medium.com/write-a-network-layer-in-swift-388fbb5d9497)
