@@ -17,7 +17,7 @@ To use the network manager you must `import NetworkLibrary` at the top of the re
 This provides an `AnyNetworkManager` that can be stored in a property
 
 ```swift
-private var anyNetworkManager: AnyNetworkManager<URLSession>`
+private var anyNetworkManager: AnyNetworkManager<URLSession>
 ```
 
 which may be passed through an initializer
