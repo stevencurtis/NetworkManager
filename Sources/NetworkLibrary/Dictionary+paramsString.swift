@@ -1,9 +1,4 @@
-//
-//  File.swift
-//  
-//
-//  Created by Steven Curtis on 09/11/2020.
-//
+//  Created by Steven Curtis
 
 import Foundation
 

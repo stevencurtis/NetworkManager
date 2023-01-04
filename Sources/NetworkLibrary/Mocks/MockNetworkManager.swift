@@ -1,8 +1,6 @@
 //  Created by Steven Curtis
 
-
 import Foundation
-
 
 // the MockHTTPManager does not use the session within the response
 public class MockNetworkManager <T: URLSessionProtocol>: NetworkManagerProtocol {
@@ -27,6 +25,4 @@ public class MockNetworkManager <T: URLSessionProtocol>: NetworkManagerProtocol 
             }
         }
     }
-
 }
-

@@ -1,7 +1,5 @@
 //  Created by Steven Curtis
 
-import Foundation
-
 struct EndPointModel: Codable {
     let products: [Products]
     let title: String

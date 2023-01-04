@@ -1,24 +1,25 @@
 //  Created by Steven Curtis
 
-
 import Foundation
 @testable import NetworkLibrary
 
-
-class MockURLSession: URLSessionProtocol {
+final class MockURLSession: URLSessionProtocol {
     typealias CompletionHandler = (Data?, URLResponse?, Error?) -> Void
-    // data and error can be set to provide data or an error
     var data: Data?
     var error: Error?
     
-    func dataTask(with request: URLRequest,
-                  completionHandler:
-                    @escaping (Data?, URLResponse?, Error?) -> Void) ->
-    MockURLSessionDataTask {
+    func dataTask(
+        with request: URLRequest,
+        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+    ) -> URLSessionDataTask {
         let data = self.data
         let error = self.error
-        let response = HTTPURLResponse(url: URL(fileURLWithPath: ""), statusCode: 200,
-                                       httpVersion: nil, headerFields: nil)!
+        let response = HTTPURLResponse(
+            url: URL(fileURLWithPath: ""),
+            statusCode: 200,
+            httpVersion: nil,
+            headerFields: nil
+        )!
         
         return MockURLSessionDataTask {
             completionHandler(data, response, error)
@@ -28,7 +29,7 @@ class MockURLSession: URLSessionProtocol {
     func dataTask(
         with url: URL,
         completionHandler: @escaping CompletionHandler
-    ) -> MockURLSessionDataTask {
+    ) -> URLSessionDataTask {
         let data = self.data
         let error = self.error
         return MockURLSessionDataTask {

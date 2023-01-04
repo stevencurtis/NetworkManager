@@ -3,17 +3,16 @@
 import Foundation
 @testable import NetworkLibrary
 
-
-class MockURLSessionDataTask: URLSessionDataTaskProtocol {
-    func cancel() { }
-    
+final class MockURLSessionDataTask: URLSessionDataTask {
     private let closure: () -> Void
 
     init(closure: @escaping () -> Void) {
         self.closure = closure
     }
 
-    func resume() {
+    override func resume() {
         closure()
     }
+    
+    override func cancel() { }
 }
