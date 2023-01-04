@@ -17,9 +17,9 @@ public class MockNetworkManager <T: URLSessionProtocol>: NetworkManagerProtocol 
     
     public func fetch(url: URL, method: HTTPMethod, completionBlock: @escaping (Result<Data, Error>) -> Void) {
         didFetch = true
-        if let dta = outputData {
+        if let data = outputData {
             if willSucceed {
-                completionBlock(.success(dta))
+                completionBlock(.success(data))
             } else {
                 completionBlock(.failure(ErrorModel(errorDescription: "Error from Mock HTTPManager")))
             }
