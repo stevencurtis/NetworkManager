@@ -5,20 +5,32 @@ import Foundation
 public class AnyNetworkManager<U: URLSessionProtocol>: NetworkManagerProtocol {
     public let session: U
     let fetchClosure: (URL, HTTPMethod, @escaping (Result<Data, Error>) -> Void) -> ()
-    let cancelClosure: ()
+    let cancelClosure: () -> ()
+    
     public func cancel() {
-        cancelClosure
+        cancelClosure()
     }
-    public init<T: NetworkManagerProtocol>(manager: T) {
+    
+    public init<T: NetworkManagerProtocol>(manager: T) throws {
         fetchClosure = manager.fetch
-        session = manager.session as! U
-        cancelClosure = manager.cancel()
+        if let sessionAsU = manager.session as? U {
+            session = sessionAsU
+        } else {
+            throw NetworkManagerError.sessionTypeMismatch
+        }
+        cancelClosure = manager.cancel
     }
-    public convenience init() {
+    
+    public convenience init() throws {
         let manager = NetworkManager<URLSession>(session: URLSession.shared)
-        self.init(manager: manager)
+        try self.init(manager: manager)
     }
-    public func fetch(url: URL, method: HTTPMethod, headers: [String : String] = [:], token: String? = nil, completionBlock: @escaping (Result<Data, Error>) -> Void) {
+    
+    public func fetch(
+        url: URL,
+        method: HTTPMethod,
+        completionBlock: @escaping (Result<Data, Error>) -> Void
+    ) {
         fetchClosure(url, method, completionBlock)
     }
 }

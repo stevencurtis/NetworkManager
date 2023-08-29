@@ -21,7 +21,7 @@ public class MockNetworkManager <T: URLSessionProtocol>: NetworkManagerProtocol 
             if willSucceed {
                 completionBlock(.success(data))
             } else {
-                completionBlock(.failure(ErrorModel(errorDescription: "Error from Mock HTTPManager")))
+                completionBlock(.failure(NetworkManagerError.dataNotReceived))
             }
         }
     }

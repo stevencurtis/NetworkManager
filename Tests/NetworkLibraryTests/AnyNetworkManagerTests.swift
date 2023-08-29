@@ -21,10 +21,10 @@ final class AnyNetworkManagerTests: XCTestCase {
         let data = Data("TEsts12".utf8)
         urlSession?.data = data
         
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .get(), headers: [:], token: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .get(), completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -43,10 +43,10 @@ final class AnyNetworkManagerTests: XCTestCase {
         let data = Data("TEsts12".utf8)
         urlSession?.data = data
         
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .post(body: [:]), headers: [:], token: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .post(body: [:]), completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -65,10 +65,10 @@ final class AnyNetworkManagerTests: XCTestCase {
         let data = Data("TEsts12".utf8)
         urlSession?.data = data
         
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .post(body: ["email": "eve.holt@reqres.in", "password": "cityslicka"]), headers: [:], token: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .post(body: ["email": "eve.holt@reqres.in", "password": "cityslicka"]), completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -86,11 +86,11 @@ final class AnyNetworkManagerTests: XCTestCase {
         urlSession = MockURLSession()
         let data = Data("TEsts12".utf8)
         urlSession?.data = data
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
-        networkManager?.fetch(url: url, method: .get(), headers: [:], token: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .get(), completionBlock: { result in
             XCTAssertNotNil(result)
             switch result {
             case .success(let data):
@@ -108,7 +108,7 @@ final class AnyNetworkManagerTests: XCTestCase {
         urlSession = MockURLSession()
         let data = Data("TEsts12".utf8)
         urlSession?.data = data
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
@@ -130,7 +130,7 @@ final class AnyNetworkManagerTests: XCTestCase {
         urlSession = MockURLSession()
         let data = Data("TEsts12".utf8)
         urlSession?.data = data
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
@@ -152,7 +152,7 @@ final class AnyNetworkManagerTests: XCTestCase {
         urlSession = MockURLSession()
         let data = Data("TEsts12".utf8)
         urlSession?.data = data
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
@@ -174,10 +174,10 @@ final class AnyNetworkManagerTests: XCTestCase {
         // One way of testing failure is for the URLSession to simply provide no data to return
         urlSession = MockURLSession()
         urlSession?.error = NSError(domain: "error", code: 101, userInfo: nil)
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .get(), headers: [:], token: nil, completionBlock: {result in
+        networkManager?.fetch(url: url, method: .get(), completionBlock: {result in
             XCTAssertNotNil(result)
             switch result {
             case .success:
@@ -194,10 +194,10 @@ final class AnyNetworkManagerTests: XCTestCase {
         // One way of testing failure is for the URLSession to simply provide no data to return
         urlSession = MockURLSession()
         urlSession?.error = NSError(domain: "error", code: 101, userInfo: nil)
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .patch(), headers: [:], token: nil, completionBlock: {result in
+        networkManager?.fetch(url: url, method: .patch(), completionBlock: {result in
             XCTAssertNotNil(result)
             switch result {
             case .success:
@@ -214,10 +214,10 @@ final class AnyNetworkManagerTests: XCTestCase {
         // One way of testing failure is for the URLSession to simply provide no data to return
         urlSession = MockURLSession()
         urlSession?.error = NSError(domain: "error", code: 101, userInfo: nil)
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .put(), headers: [:], token: nil, completionBlock: {result in
+        networkManager?.fetch(url: url, method: .put(), completionBlock: {result in
             XCTAssertNotNil(result)
             switch result {
             case .success:
@@ -234,7 +234,7 @@ final class AnyNetworkManagerTests: XCTestCase {
         // One way of testing failure is for the URLSession to simply provide no data to return
         urlSession = MockURLSession()
         urlSession?.error = NSError(domain: "error", code: 101, userInfo: nil)
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         networkManager?.fetch(url: url, method: .delete(), completionBlock: {result in
@@ -252,10 +252,10 @@ final class AnyNetworkManagerTests: XCTestCase {
     
     func testBadlyFormattedgetURLResponse() {
         urlSession = MockURLSession()
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .get(), headers: [:], token: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .get(), completionBlock: { result in
             switch result {
             case .success:
                 XCTFail()
@@ -269,10 +269,10 @@ final class AnyNetworkManagerTests: XCTestCase {
     
     func testBadlyFormattedputURLResponse() {
         urlSession = MockURLSession()
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .put(), headers: [:], token: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .put(), completionBlock: { result in
             switch result {
             case .success:
                 XCTFail()
@@ -286,10 +286,10 @@ final class AnyNetworkManagerTests: XCTestCase {
     
     func testBadlyFormattedDeleteURLResponse() {
         urlSession = MockURLSession()
-        networkManager = AnyNetworkManager(manager: NetworkManager(session: urlSession!))
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: urlSession!))
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .delete(), headers: [:], token: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .delete(), completionBlock: { result in
             switch result {
             case .success:
                 XCTFail()
@@ -304,10 +304,10 @@ final class AnyNetworkManagerTests: XCTestCase {
     
     func testAnyNetworkConv() {
         var networkManager: AnyNetworkManager<URLSession>?
-        networkManager = AnyNetworkManager()
+        networkManager = try? AnyNetworkManager()
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
-        networkManager?.fetch(url: url, method: .delete(), headers: [:], token: nil, completionBlock: { result in
+        networkManager?.fetch(url: url, method: .delete(), completionBlock: { result in
             switch result {
             case .success:
                 XCTFail()
@@ -319,4 +319,23 @@ final class AnyNetworkManagerTests: XCTestCase {
         wait(for: [expectation], timeout: 3.0)
     }
     
+    func testCancellation() throws {
+        var networkManager: AnyNetworkManager<MockURLSession>?
+
+        urlSession = MockURLSession()
+        let mgr = NetworkManager(session: urlSession!)
+        networkManager = try? AnyNetworkManager(manager: mgr)
+        
+
+        networkManager?.fetch(
+            url: URL(string: "https://example.com")!,
+            method: .get(headers: [:], token: ""),
+            completionBlock: { _ in }
+        )
+        
+        networkManager?.cancel()
+
+        let mockTask = try XCTUnwrap(mgr.task as? MockURLSessionDataTask)
+        XCTAssertTrue(mockTask.cancelTaskCalled)
+    }
 }

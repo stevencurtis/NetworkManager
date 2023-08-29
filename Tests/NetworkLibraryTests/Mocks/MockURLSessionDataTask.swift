@@ -14,5 +14,8 @@ final class MockURLSessionDataTask: URLSessionDataTask {
         closure()
     }
     
-    override func cancel() { }
+    var cancelTaskCalled = false
+    override func cancel() {
+        cancelTaskCalled = true
+    }
 }
