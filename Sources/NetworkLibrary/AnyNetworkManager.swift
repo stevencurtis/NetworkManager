@@ -6,6 +6,7 @@ public final class AnyNetworkManager<U: URLSessionProtocol>: NetworkManagerProto
     public let session: U
     private let fetchClosure: (URL, HTTPMethod, @escaping (Result<Data, Error>) -> Void) -> ()
     private let cancelClosure: () -> ()
+    private let fetchAsyncClosure: (URL, HTTPMethod) async throws -> Data
     
     public func cancel() {
         cancelClosure()
@@ -13,6 +14,7 @@ public final class AnyNetworkManager<U: URLSessionProtocol>: NetworkManagerProto
     
     public init<T: NetworkManagerProtocol>(manager: T) throws {
         fetchClosure = manager.fetch
+        fetchAsyncClosure = manager.fetch(url:method:)
         if let sessionAsU = manager.session as? U {
             session = sessionAsU
         } else {
@@ -32,5 +34,9 @@ public final class AnyNetworkManager<U: URLSessionProtocol>: NetworkManagerProto
         completionBlock: @escaping (Result<Data, Error>) -> Void
     ) {
         fetchClosure(url, method, completionBlock)
+    }
+    
+    public func fetch(url: URL, method: HTTPMethod) async throws -> Data {
+        try await fetchAsyncClosure(url, method)
     }
 }

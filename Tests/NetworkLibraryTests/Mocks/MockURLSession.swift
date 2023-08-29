@@ -20,7 +20,7 @@ final class MockURLSession: URLSessionProtocol {
             statusCode: 200,
             httpVersion: nil,
             headerFields: nil
-        )!
+        )
         let task = MockURLSessionDataTask {
             completionHandler(data, response, error)
         }
@@ -39,5 +39,10 @@ final class MockURLSession: URLSessionProtocol {
         }
         self.task = task
         return task
+    }
+    
+    func data(for request: URLRequest) async throws -> (Data, URLResponse) {
+        let response = URLResponse()
+        return (data ?? Data(), response)
     }
 }

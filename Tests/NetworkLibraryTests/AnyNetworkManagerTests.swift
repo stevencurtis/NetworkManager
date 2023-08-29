@@ -9,7 +9,8 @@ final class AnyNetworkManagerTests: XCTestCase {
     
     func testGetMethodNoBody() {
         urlSession = MockURLSession()
-        let data = Data("TEsts12".utf8)
+        let testString = "Test String"
+        let data = Data(testString.utf8)
         urlSession?.data = data
         
         networkManager = try? AnyNetworkManager(manager: NetworkManager(session: XCTUnwrap(urlSession)))
@@ -19,7 +20,7 @@ final class AnyNetworkManagerTests: XCTestCase {
             switch result {
             case .success(let data):
                 let decodedString = String(decoding: data, as: UTF8.self)
-                XCTAssertEqual(decodedString, "TEsts12")
+                XCTAssertEqual(decodedString, testString)
             case .failure:
                 XCTFail()
             }
@@ -28,7 +29,8 @@ final class AnyNetworkManagerTests: XCTestCase {
     
     func testPostMethodNoBody() {
         urlSession = MockURLSession()
-        let data = Data("TEsts12".utf8)
+        let testString = "Test String"
+        let data = Data(testString.utf8)
         urlSession?.data = data
         
         networkManager = try? AnyNetworkManager(manager: NetworkManager(session: XCTUnwrap(urlSession)))
@@ -38,7 +40,7 @@ final class AnyNetworkManagerTests: XCTestCase {
             switch result {
             case .success(let data):
                 let decodedString = String(decoding: data, as: UTF8.self)
-                XCTAssertEqual(decodedString, "TEsts12")
+                XCTAssertEqual(decodedString, testString)
             case .failure:
                 XCTFail()
             }
@@ -47,7 +49,8 @@ final class AnyNetworkManagerTests: XCTestCase {
     
     func testPostMethodBody() {
         urlSession = MockURLSession()
-        let data = Data("TEsts12".utf8)
+        let testString = "Test String"
+        let data = Data(testString.utf8)
         urlSession?.data = data
         
         networkManager = try? AnyNetworkManager(manager: NetworkManager(session: XCTUnwrap(urlSession)))
@@ -57,7 +60,7 @@ final class AnyNetworkManagerTests: XCTestCase {
             switch result {
             case .success(let data):
                 let decodedString = String(decoding: data, as: UTF8.self)
-                XCTAssertEqual(decodedString, "TEsts12")
+                XCTAssertEqual(decodedString, testString)
             case .failure:
                 XCTFail()
             }
@@ -66,7 +69,8 @@ final class AnyNetworkManagerTests: XCTestCase {
     
     func testSuccessfulGetURLResponse() {
         urlSession = MockURLSession()
-        let data = Data("TEsts12".utf8)
+        let testString = "Test String"
+        let data = Data(testString.utf8)
         urlSession?.data = data
         networkManager = try? AnyNetworkManager(manager: NetworkManager(session: XCTUnwrap(urlSession)))
         let url = URL(fileURLWithPath: "http://www.google.com")
@@ -76,7 +80,7 @@ final class AnyNetworkManagerTests: XCTestCase {
             switch result {
             case .success(let data):
                 let decodedString = String(decoding: data, as: UTF8.self)
-                XCTAssertEqual(decodedString, "TEsts12")
+                XCTAssertEqual(decodedString, testString)
             case .failure:
                 XCTFail()
             }
@@ -85,7 +89,8 @@ final class AnyNetworkManagerTests: XCTestCase {
     
     func testSuccessfulPatchURLResponse() {
         urlSession = MockURLSession()
-        let data = Data("TEsts12".utf8)
+        let testString = "Test String"
+        let data = Data(testString.utf8)
         urlSession?.data = data
         networkManager = try? AnyNetworkManager(manager: NetworkManager(session: XCTUnwrap(urlSession)))
         let url = URL(fileURLWithPath: "http://www.google.com")
@@ -95,7 +100,7 @@ final class AnyNetworkManagerTests: XCTestCase {
             switch result {
             case .success(let data):
                 let decodedString = String(decoding: data, as: UTF8.self)
-                XCTAssertEqual(decodedString, "TEsts12")
+                XCTAssertEqual(decodedString, testString)
             case .failure:
                 XCTFail()
             }
@@ -104,7 +109,8 @@ final class AnyNetworkManagerTests: XCTestCase {
     
     func testSuccessfulPutURLResponse() {
         urlSession = MockURLSession()
-        let data = Data("TEsts12".utf8)
+        let testString = "Test String"
+        let data = Data(testString.utf8)
         urlSession?.data = data
         networkManager = try? AnyNetworkManager(manager: NetworkManager(session: XCTUnwrap(urlSession)))
         let url = URL(fileURLWithPath: "http://www.google.com")
@@ -114,7 +120,7 @@ final class AnyNetworkManagerTests: XCTestCase {
             switch result {
             case .success(let data):
                 let decodedString = String(decoding: data, as: UTF8.self)
-                XCTAssertEqual(decodedString, "TEsts12")
+                XCTAssertEqual(decodedString, testString)
             case .failure:
                 XCTFail()
             }
@@ -123,7 +129,8 @@ final class AnyNetworkManagerTests: XCTestCase {
     
     func testSuccessfulDeleteURLResponse() {
         urlSession = MockURLSession()
-        let data = Data("TEsts12".utf8)
+        let testString = "Test Data"
+        let data = Data(testString.utf8)
         urlSession?.data = data
         networkManager = try? AnyNetworkManager(manager: NetworkManager(session: XCTUnwrap(urlSession)))
         let url = URL(fileURLWithPath: "http://www.google.com")
@@ -133,7 +140,7 @@ final class AnyNetworkManagerTests: XCTestCase {
             switch result {
             case .success(let data):
                 let decodedString = String(decoding: data, as: UTF8.self)
-                XCTAssertEqual(decodedString, "TEsts12")
+                XCTAssertEqual(decodedString, testString)
             case .failure:
                 XCTFail()
             }
@@ -268,7 +275,7 @@ final class AnyNetworkManagerTests: XCTestCase {
         var networkManager: AnyNetworkManager<MockURLSession>?
 
         urlSession = MockURLSession()
-        let mgr = NetworkManager(session: urlSession!)
+        let mgr = NetworkManager(session: try XCTUnwrap(urlSession))
         networkManager = try? AnyNetworkManager(manager: mgr)
 
         networkManager?.fetch(
@@ -283,7 +290,16 @@ final class AnyNetworkManagerTests: XCTestCase {
         XCTAssertTrue(mockTask.cancelTaskCalled)
     }
     
-    func testAsyncFetch() throws {
+    func testAsyncFetch() async throws {
+        urlSession = MockURLSession()
+        let testString = "Test Data"
+        let sessionData = Data(testString.utf8)
+        urlSession?.data = sessionData
         
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: XCTUnwrap(urlSession)))
+        let url = URL(fileURLWithPath: "http://www.google.com")
+        let data = try await networkManager!.fetch(url: url, method: .get())
+        let decodedString = String(decoding: data, as: UTF8.self)
+        XCTAssertEqual(decodedString, testString)
     }
 }

@@ -80,13 +80,17 @@ extension HTTPMethod: CustomStringConvertible {
 public final class NetworkManager<T: URLSessionProtocol>: NetworkManagerProtocol {
     public let session: T
     private var task: URLSessionDataTask?
-
+    private var dataTask: Task<Data, Error>?
+    
     public required init(session: T) {
         self.session = session
     }
     
-    public convenience init() {
-        self.init(session: URLSession.shared as! T)
+    public convenience init() throws {
+        guard let session = URLSession.shared as? T else {
+            throw NetworkManagerError.sessionTypeMismatch
+        }
+        self.init(session: session)
     }
     
     public func cancel() {
@@ -133,9 +137,8 @@ public final class NetworkManager<T: URLSessionProtocol>: NetworkManagerProtocol
         task?.resume()
     }
     
-    @available(iOS 13.0.0, *)
     public func fetch(url: URL, method: HTTPMethod) async throws -> Data {
-        let dataTask = Task {
+        dataTask = Task {
             var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 30.0)
             request.httpMethod = method.method
             request.allHTTPHeaderFields = method.getHeaders()
@@ -150,9 +153,12 @@ public final class NetworkManager<T: URLSessionProtocol>: NetworkManagerProtocol
                 request.httpBody = bodyData
             }
             
-            let (data, _) = try await URLSession.shared.data(for: request)
+            let (data, _) = try await session.data(for: request)
             return data
         }
-        return try await dataTask.value
+        guard let taskData = try await dataTask?.value else {
+            throw NetworkManagerError.dataNotReceived
+        }
+        return taskData
     }
 }
