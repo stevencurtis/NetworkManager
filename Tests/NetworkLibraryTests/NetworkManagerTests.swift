@@ -4,22 +4,14 @@ import XCTest
 @testable import NetworkLibrary
 
 final class NetworkManagerTests: XCTestCase {
-    
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-    
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
     var urlSession: MockURLSession?
     var networkManager: NetworkManager<MockURLSession>?
     
-    func testGetMethodNoBody() {
+    func testGetMethodNoBody() throws {
         urlSession = MockURLSession()
         let data = Data("TEsts12".utf8)
         urlSession?.data = data
-        networkManager = NetworkManager(session: urlSession!)
+        networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         networkManager?.fetch(url: url, method: .get(), completionBlock: { result in
@@ -36,11 +28,11 @@ final class NetworkManagerTests: XCTestCase {
         waitForExpectations(timeout: 3.0)
     }
     
-    func testSuccessfulGetURLResponse() {
+    func testSuccessfulGetURLResponse() throws {
         urlSession = MockURLSession()
         let data = Data("TEsts12".utf8)
         urlSession?.data = data
-        networkManager = NetworkManager(session: urlSession!)
+        networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
@@ -58,11 +50,11 @@ final class NetworkManagerTests: XCTestCase {
         waitForExpectations(timeout: 3.0)
     }
     
-    func testSuccessfulPatchURLResponse() {
+    func testSuccessfulPatchURLResponse() throws {
         urlSession = MockURLSession()
         let data = Data("TEsts12".utf8)
         urlSession?.data = data
-        networkManager = NetworkManager(session: urlSession!)
+        networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
@@ -80,11 +72,11 @@ final class NetworkManagerTests: XCTestCase {
         waitForExpectations(timeout: 3.0)
     }
     
-    func testSuccessfulPutURLResponse() {
+    func testSuccessfulPutURLResponse() throws {
         urlSession = MockURLSession()
         let data = Data("TEsts12".utf8)
         urlSession?.data = data
-        networkManager = NetworkManager(session: urlSession!)
+        networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
@@ -102,11 +94,11 @@ final class NetworkManagerTests: XCTestCase {
         waitForExpectations(timeout: 3.0)
     }
     
-    func testSuccessfulDeleteURLResponse() {
+    func testSuccessfulDeleteURLResponse() throws {
         urlSession = MockURLSession()
         let data = Data("TEsts12".utf8)
         urlSession?.data = data
-        networkManager = NetworkManager(session: urlSession!)
+        networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         
@@ -124,11 +116,11 @@ final class NetworkManagerTests: XCTestCase {
         waitForExpectations(timeout: 3.0)
     }
     
-    func testFailureGetURLResponse() {
+    func testFailureGetURLResponse() throws {
         // One way of testing failure is for the URLSession to simply provide no data to return
         urlSession = MockURLSession()
         urlSession?.error = NSError(domain: "error", code: 101, userInfo: nil)
-        networkManager = NetworkManager(session: urlSession!)
+        networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         networkManager?.fetch(url: url, method: .get(), completionBlock: {result in
@@ -144,11 +136,11 @@ final class NetworkManagerTests: XCTestCase {
         waitForExpectations(timeout: 3.0)
     }
     
-    func testFailurePatchURLResponse() {
+    func testFailurePatchURLResponse() throws {
         // One way of testing failure is for the URLSession to simply provide no data to return
         urlSession = MockURLSession()
         urlSession?.error = NSError(domain: "error", code: 101, userInfo: nil)
-        networkManager = NetworkManager(session: urlSession!)
+        networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         networkManager?.fetch(url: url, method: .patch(), completionBlock: {result in
@@ -164,11 +156,11 @@ final class NetworkManagerTests: XCTestCase {
         waitForExpectations(timeout: 3.0)
     }
     
-    func testFailurePutURLResponse() {
+    func testFailurePutURLResponse() throws {
         // One way of testing failure is for the URLSession to simply provide no data to return
         urlSession = MockURLSession()
         urlSession?.error = NSError(domain: "error", code: 101, userInfo: nil)
-        networkManager = NetworkManager(session: urlSession!)
+        networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         networkManager?.fetch(url: url, method: .put(), completionBlock: {result in
@@ -184,11 +176,11 @@ final class NetworkManagerTests: XCTestCase {
         waitForExpectations(timeout: 3.0)
     }
     
-    func testFailureDeleteURLResponse() {
+    func testFailureDeleteURLResponse() throws {
         // One way of testing failure is for the URLSession to simply provide no data to return
         urlSession = MockURLSession()
         urlSession?.error = NSError(domain: "error", code: 101, userInfo: nil)
-        networkManager = NetworkManager(session: urlSession!)
+        networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
         let expect = expectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         networkManager?.fetch(url: url, method: .delete(), completionBlock: {result in
@@ -204,9 +196,9 @@ final class NetworkManagerTests: XCTestCase {
         waitForExpectations(timeout: 3.0)
     }
     
-    func testBadlyFormattedgetURLResponse() {
+    func testBadlyFormattedgetURLResponse() throws {
         urlSession = MockURLSession()
-        networkManager = NetworkManager(session: urlSession!)
+        networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         networkManager?.fetch(url: url, method: .get(), completionBlock: { result in
@@ -221,9 +213,9 @@ final class NetworkManagerTests: XCTestCase {
         wait(for: [expectation], timeout: 3.0)
     }
     
-    func testBadlyFormattedputURLResponse() {
+    func testBadlyFormattedputURLResponse() throws {
         urlSession = MockURLSession()
-        networkManager = NetworkManager(session: urlSession!)
+        networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
         networkManager?.fetch(url: url, method: .put(), completionBlock: { result in
@@ -238,9 +230,9 @@ final class NetworkManagerTests: XCTestCase {
         wait(for: [expectation], timeout: 3.0)
     }
     
-    func testBadlyFormattedDeleteURLResponse() {
+    func testBadlyFormattedDeleteURLResponse() throws {
         urlSession = MockURLSession()
-        networkManager = NetworkManager(session: urlSession!)
+        networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
         let expectation = XCTestExpectation(description: #function)
         let url = URL(fileURLWithPath: "http://www.google.com")
                 

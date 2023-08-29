@@ -58,7 +58,7 @@ extension HTTPMethod: CustomStringConvertible {
     }
     
     public var method: String {
-        return self.description
+        self.description
     }
     
     public var description: String {
@@ -77,9 +77,9 @@ extension HTTPMethod: CustomStringConvertible {
     }
 }
 
-public class NetworkManager<T: URLSessionProtocol> {
+public final class NetworkManager<T: URLSessionProtocol>: NetworkManagerProtocol {
     public let session: T
-    var task: URLSessionDataTask?
+    private var task: URLSessionDataTask?
 
     public required init(session: T) {
         self.session = session
@@ -131,5 +131,28 @@ public class NetworkManager<T: URLSessionProtocol> {
             }
         }
         task?.resume()
+    }
+    
+    @available(iOS 13.0.0, *)
+    public func fetch(url: URL, method: HTTPMethod) async throws -> Data {
+        let dataTask = Task {
+            var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 30.0)
+            request.httpMethod = method.method
+            request.allHTTPHeaderFields = method.getHeaders()
+            
+            if let bearerToken = method.getToken() {
+                request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+            }
+            
+            if let data = method.getData() {
+                let stringParams = data.paramsString()
+                let bodyData = stringParams.data(using: .utf8, allowLossyConversion: false)
+                request.httpBody = bodyData
+            }
+            
+            let (data, _) = try await URLSession.shared.data(for: request)
+            return data
+        }
+        return try await dataTask.value
     }
 }

@@ -2,10 +2,10 @@
 
 import Foundation
 
-public class AnyNetworkManager<U: URLSessionProtocol>: NetworkManagerProtocol {
+public final class AnyNetworkManager<U: URLSessionProtocol>: NetworkManagerProtocol {
     public let session: U
-    let fetchClosure: (URL, HTTPMethod, @escaping (Result<Data, Error>) -> Void) -> ()
-    let cancelClosure: () -> ()
+    private let fetchClosure: (URL, HTTPMethod, @escaping (Result<Data, Error>) -> Void) -> ()
+    private let cancelClosure: () -> ()
     
     public func cancel() {
         cancelClosure()
