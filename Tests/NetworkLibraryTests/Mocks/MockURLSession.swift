@@ -7,7 +7,6 @@ final class MockURLSession: URLSessionProtocol {
     typealias CompletionHandler = (Data?, URLResponse?, Error?) -> Void
     var data: Data?
     var error: Error?
-    
     var task: URLSessionDataTask?
     func dataTask(
         with request: URLRequest,
@@ -21,11 +20,7 @@ final class MockURLSession: URLSessionProtocol {
             httpVersion: nil,
             headerFields: nil
         )
-        let task = MockURLSessionDataTask {
-            completionHandler(data, response, error)
-        }
-        self.task = task
-        return task
+        return makeTask(data: data, response: response, error: error, completionHandler: completionHandler)
     }
     
     func dataTask(
@@ -34,15 +29,29 @@ final class MockURLSession: URLSessionProtocol {
     ) -> URLSessionDataTask {
         let data = self.data
         let error = self.error
+        return makeTask(data: data, error: error, completionHandler: completionHandler)
+    }
+    
+    private func makeTask(
+        data: Data?,
+        response: HTTPURLResponse? = nil,
+        error: Error?,
+        completionHandler: @escaping CompletionHandler
+    ) -> URLSessionDataTask {
         let task = MockURLSessionDataTask {
-            completionHandler(data, nil, error)
+            completionHandler(data, response, error)
         }
         self.task = task
         return task
     }
     
     func data(for request: URLRequest) async throws -> (Data, URLResponse) {
-        let response = URLResponse()
+        let response = HTTPURLResponse(
+            url: URL(fileURLWithPath: ""),
+            statusCode: 200,
+            httpVersion: nil,
+            headerFields: nil
+        )!
         return (data ?? Data(), response)
     }
 }

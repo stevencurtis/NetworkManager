@@ -21,4 +21,3 @@ extension Products: Equatable {
 }
 
 struct UnexpectedNilError: Error {}
-

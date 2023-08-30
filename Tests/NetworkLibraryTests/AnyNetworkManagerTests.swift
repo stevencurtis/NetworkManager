@@ -278,14 +278,14 @@ final class AnyNetworkManagerTests: XCTestCase {
         let mgr = NetworkManager(session: try XCTUnwrap(urlSession))
         networkManager = try? AnyNetworkManager(manager: mgr)
 
+        let url = try XCTUnwrap(URL(string: "https://example.com"))
         networkManager?.fetch(
-            url: URL(string: "https://example.com")!,
+            url: url,
             method: .get(headers: [:], token: ""),
             completionBlock: { _ in }
         )
         
         networkManager?.cancel()
-
         let mockTask = try XCTUnwrap(urlSession?.task as? MockURLSessionDataTask)
         XCTAssertTrue(mockTask.cancelTaskCalled)
     }
@@ -296,10 +296,67 @@ final class AnyNetworkManagerTests: XCTestCase {
         let sessionData = Data(testString.utf8)
         urlSession?.data = sessionData
         
-        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: XCTUnwrap(urlSession)))
+        networkManager = try AnyNetworkManager(
+            manager: NetworkManager(session: XCTUnwrap(urlSession))
+        )
         let url = URL(fileURLWithPath: "http://www.google.com")
-        let data = try await networkManager!.fetch(url: url, method: .get())
-        let decodedString = String(decoding: data, as: UTF8.self)
+        let data = try await networkManager?.fetch(url: url, method: .get())
+        let dataUnwrapped = try XCTUnwrap(data)
+        let decodedString = String(decoding: dataUnwrapped, as: UTF8.self)
         XCTAssertEqual(decodedString, testString)
+    }
+    
+    func testAsyncFetchCancel() async throws {
+        urlSession = MockURLSession()
+        let testString = "Test Data"
+        let sessionData = Data(testString.utf8)
+        urlSession?.data = sessionData
+        
+        networkManager = try? AnyNetworkManager(manager: NetworkManager(session: XCTUnwrap(urlSession)))
+        networkManager?.cancel()
+        let url = URL(fileURLWithPath: "http://www.google.com")
+        let data = try await networkManager?.fetch(url: url, method: .get())
+        let dataUnwrapped = try XCTUnwrap(data)
+        let decodedString = String(decoding: dataUnwrapped, as: UTF8.self)
+        XCTAssertEqual(decodedString, testString)
+    }
+
+    @MainActor
+    func testAsyncFetchCancellation() async throws {
+        let taskCompletedExpectation = expectation(description: "Task completed")
+        
+        urlSession = MockURLSession()
+        let testString = "Test Data"
+        let sessionData = Data(testString.utf8)
+        urlSession?.data = sessionData
+        let underlyingNetworkManager = NetworkManager(session: try XCTUnwrap(urlSession))
+        networkManager = try? AnyNetworkManager(manager: underlyingNetworkManager)
+        let url = URL(fileURLWithPath: "http://www.google.com")
+        
+        let _ = Task.detached {
+            do {
+                let _ = try? await self.networkManager?.fetch(url: url, method: .get())
+                self.networkManager?.cancel()
+                
+                if Task.isCancelled {
+                    throw CancellationError()
+                }
+                
+                taskCompletedExpectation.fulfill()
+            }
+        }
+        
+        wait(for: [taskCompletedExpectation], timeout: 3)
+        XCTAssertTrue(testDataTaskIsCancelled(in: underlyingNetworkManager))
+    }
+}
+
+extension AnyNetworkManagerTests {
+    private func testDataTaskIsCancelled(in manager: NetworkManager<MockURLSession>) -> Bool {
+        let mirror = Mirror(reflecting: manager)
+        if let dataTask = mirror.descendant("dataTask") as? Task<Data, Error> {
+            return dataTask.isCancelled
+        }
+        return false
     }
 }

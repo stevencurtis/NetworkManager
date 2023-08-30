@@ -117,7 +117,6 @@ final class NetworkManagerTests: XCTestCase {
     }
     
     func testFailureGetURLResponse() throws {
-        // One way of testing failure is for the URLSession to simply provide no data to return
         urlSession = MockURLSession()
         urlSession?.error = NSError(domain: "error", code: 101, userInfo: nil)
         networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
@@ -137,7 +136,6 @@ final class NetworkManagerTests: XCTestCase {
     }
     
     func testFailurePatchURLResponse() throws {
-        // One way of testing failure is for the URLSession to simply provide no data to return
         urlSession = MockURLSession()
         urlSession?.error = NSError(domain: "error", code: 101, userInfo: nil)
         networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
@@ -157,7 +155,6 @@ final class NetworkManagerTests: XCTestCase {
     }
     
     func testFailurePutURLResponse() throws {
-        // One way of testing failure is for the URLSession to simply provide no data to return
         urlSession = MockURLSession()
         urlSession?.error = NSError(domain: "error", code: 101, userInfo: nil)
         networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
@@ -177,7 +174,6 @@ final class NetworkManagerTests: XCTestCase {
     }
     
     func testFailureDeleteURLResponse() throws {
-        // One way of testing failure is for the URLSession to simply provide no data to return
         urlSession = MockURLSession()
         urlSession?.error = NSError(domain: "error", code: 101, userInfo: nil)
         networkManager = NetworkManager(session: try XCTUnwrap(urlSession))
@@ -247,5 +243,4 @@ final class NetworkManagerTests: XCTestCase {
         })
         wait(for: [expectation], timeout: 3.0)
     }
-    
 }

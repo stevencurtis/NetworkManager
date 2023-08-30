@@ -95,43 +95,36 @@ public final class NetworkManager<T: URLSessionProtocol>: NetworkManagerProtocol
     
     public func cancel() {
         task?.cancel()
+        dataTask?.cancel()
     }
     
     public func fetch(url: URL, method: HTTPMethod, completionBlock: @escaping (Result<Data, Error>) -> Void) {
+        let request = makeRequest(url: url, method: method)
         
-        var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 30.0)
-        request.httpMethod = method.method
-        request.allHTTPHeaderFields = method.getHeaders()
-        
-        if let bearerToken = method.getToken() {
-            request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
-        }
-
-        if let data = method.getData() {
-            let stringParams = data.paramsString()
-            let bodyData = stringParams.data(using: String.Encoding.utf8, allowLossyConversion: false)
-            request.httpBody = bodyData
-        }
-        
-        task = session.dataTask(with: request) { data, response, error in
+        task = session.dataTask(with: request) { data, httpResponse, error in
             guard error == nil else {
-                completionBlock(.failure(error!))
+                if let error = error {
+                    completionBlock(.failure(error))
+                } else {
+                    completionBlock(.failure(NetworkManagerError.httpError(.unknown)))
+                }
                 return
             }
-            guard
-                let _ = data,
-                let httpResponse = response as? HTTPURLResponse,
-                200 ..< 300 ~= httpResponse.statusCode else {
-                    if let data = data {
-                        completionBlock(.success(data))
-                    } else {
-                        completionBlock(.failure(NetworkManagerError.invalidResponse(data, response)))
-                    }
-                    return
+            
+            guard let httpResponse = httpResponse as? HTTPURLResponse else {
+                completionBlock(.failure(NetworkManagerError.invalidResponse(data, httpResponse)))
+                return
             }
-
-            if let data = data {
-                completionBlock(.success(data))
+            
+            switch self.handleStatusCode(statusCode: httpResponse.statusCode) {
+            case .success:
+                if let data = data {
+                    completionBlock(.success(data))
+                } else {
+                    completionBlock(.failure(NetworkManagerError.dataNotReceived))
+                }
+            case .failure(let error):
+                completionBlock(.failure(error))
             }
         }
         task?.resume()
@@ -139,20 +132,7 @@ public final class NetworkManager<T: URLSessionProtocol>: NetworkManagerProtocol
     
     public func fetch(url: URL, method: HTTPMethod) async throws -> Data {
         dataTask = Task {
-            var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 30.0)
-            request.httpMethod = method.method
-            request.allHTTPHeaderFields = method.getHeaders()
-            
-            if let bearerToken = method.getToken() {
-                request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
-            }
-            
-            if let data = method.getData() {
-                let stringParams = data.paramsString()
-                let bodyData = stringParams.data(using: .utf8, allowLossyConversion: false)
-                request.httpBody = bodyData
-            }
-            
+            let request = makeRequest(url: url, method: method)
             let (data, _) = try await session.data(for: request)
             return data
         }
@@ -160,5 +140,45 @@ public final class NetworkManager<T: URLSessionProtocol>: NetworkManagerProtocol
             throw NetworkManagerError.dataNotReceived
         }
         return taskData
+    }
+    
+    private func handleStatusCode(statusCode: Int) -> Result<Void, NetworkManagerError> {
+        switch statusCode {
+        case 200 ..< 300:
+            return .success(())
+        case 400:
+            return .failure(NetworkManagerError.httpError(.badRequest))
+        case 401:
+            return .failure(NetworkManagerError.httpError(.unauthorized))
+        case 403:
+            return .failure(NetworkManagerError.httpError(.forbidden))
+        case 404:
+            return .failure(NetworkManagerError.httpError(.notFound))
+        case 500:
+            return .failure(NetworkManagerError.httpError(.serverError))
+        default:
+            return .failure(NetworkManagerError.httpError(.unknown))
+        }
+    }
+    
+    private func makeRequest(url: URL, method: HTTPMethod) -> URLRequest {
+        var request = URLRequest(
+            url: url,
+            cachePolicy: .useProtocolCachePolicy,
+            timeoutInterval: 30.0
+        )
+        request.httpMethod = method.method
+        request.allHTTPHeaderFields = method.getHeaders()
+        
+        if let bearerToken = method.getToken() {
+            request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+        }
+        
+        if let data = method.getData() {
+            let stringParams = data.paramsString()
+            let bodyData = stringParams.data(using: .utf8, allowLossyConversion: false)
+            request.httpBody = bodyData
+        }
+        return request
     }
 }
